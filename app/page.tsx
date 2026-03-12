@@ -310,14 +310,16 @@ export default function Page() {
                 "Sharp diagnosis, world-class care — quality wey go loud for your eyes."
               </p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-10 border-t border-secondary/10">
+              <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-3 gap-8 pt-10 border-t border-secondary/10 -mx-6 px-6 sm:mx-0 sm:px-0">
                 {STATS.map((stat, i) => (
-                  <div key={i} className="text-center sm:text-left">
-                    <div className="flex items-center justify-center sm:justify-start gap-2 text-accent mb-2">
-                      <stat.icon size={20} />
-                      <span className="text-3xl font-bold text-secondary">{stat.number}</span>
+                  <div key={i} className="text-center sm:text-left min-w-[260px] sm:min-w-0 snap-center bg-secondary/5 sm:bg-transparent p-8 sm:p-0 rounded-3xl sm:rounded-none">
+                    <div className="flex items-center justify-center sm:justify-start gap-4 text-accent mb-4">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                        <stat.icon size={24} />
+                      </div>
+                      <span className="text-4xl font-bold text-secondary tracking-tighter">{stat.number}</span>
                     </div>
-                    <p className="text-secondary/50 text-xs tracking-widest uppercase font-bold">{stat.label}</p>
+                    <p className="text-secondary/40 text-[10px] tracking-[0.3em] uppercase font-black">{stat.label}</p>
                   </div>
                 ))}
               </div>
