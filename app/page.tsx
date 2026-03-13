@@ -2,22 +2,22 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { 
-  Menu, 
-  X, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Instagram, 
-  ArrowRight, 
-  Bot, 
-  Droplets, 
-  HeartPulse, 
-  Glasses, 
-  Users, 
-  Award, 
-  Stethoscope, 
-  Star, 
+import {
+  Menu,
+  X,
+  Phone,
+  Mail,
+  MapPin,
+  Instagram,
+  ArrowRight,
+  Bot,
+  Droplets,
+  HeartPulse,
+  Glasses,
+  Users,
+  Award,
+  Stethoscope,
+  Star,
   Quote,
   ImageOff,
   CheckCircle
@@ -133,6 +133,34 @@ export default function Page() {
   const testimonialsReveal = useScrollReveal();
   const contactReveal = useScrollReveal();
 
+  const [activeStat, setActiveStat] = useState(0);
+  const statsContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStat((prev) => (prev + 1) % STATS.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const container = statsContainerRef.current;
+    if (container && window.innerWidth < 768) {
+      const child = container.children[activeStat] as HTMLElement;
+      if (child) {
+        const containerWidth = container.offsetWidth;
+        const childOffset = child.offsetLeft;
+        const childWidth = child.offsetWidth;
+        const targetScroll = childOffset - (containerWidth - childWidth) / 2;
+
+        container.scrollTo({
+          left: targetScroll,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeStat]);
+
   return (
     <main className="relative bg-primary">
       {/* NAVBAR */}
@@ -140,7 +168,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <a href="#home" className="flex items-center gap-3">
             <span className="font-heading text-3xl font-black text-secondary tracking-tighter">
-              {BRAND.name.split(' ').map(w => w[0]).slice(0,2).join('')}
+              {BRAND.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
             </span>
             <span className="text-secondary/60 text-[10px] font-mono tracking-[0.2em] uppercase hidden sm:block">
               {BRAND.name}
@@ -192,7 +220,7 @@ export default function Page() {
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-primary to-accent/5" />
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-accent/10 rounded-full blur-[120px] animate-float" />
         <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary/5 rounded-full blur-[100px]" />
-        
+
         <div className={`relative z-10 text-center max-w-5xl px-6 transition-all duration-1000 ${heroReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-bold text-secondary leading-[0.9] tracking-tighter">
             Excellence in Sight.<br />
@@ -231,12 +259,12 @@ export default function Page() {
             <h2 className="font-heading text-4xl md:text-5xl font-bold text-secondary">Specialized Medical Services</h2>
             <p className="text-accent font-medium mt-4 tracking-widest uppercase text-sm">Advanced Diagnostics & Surgical Excellence</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {FEATURES.map((item, idx) => (
-              <div key={idx} 
-                   style={{ transitionDelay: `${idx * 150}ms` }}
-                   className={`p-10 rounded-3xl bg-secondary/5 border border-secondary/5 group hover:bg-secondary transition-all duration-500 hover:-translate-y-2 ${featuresReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <div key={idx}
+                style={{ transitionDelay: `${idx * 150}ms` }}
+                className={`p-10 rounded-3xl bg-secondary/5 border border-secondary/5 group hover:bg-secondary transition-all duration-500 hover:-translate-y-2 ${featuresReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-8 group-hover:bg-accent transition-colors duration-500">
                   <item.icon size={32} className="text-secondary group-hover:text-white" />
                 </div>
@@ -265,9 +293,9 @@ export default function Page() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {PRODUCTS.map((prod, idx) => (
-              <div key={idx} 
-                   className={`group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 transition-all duration-500 hover:border-accent ${productsReveal.isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-                   style={{ transitionDelay: `${idx * 100}ms` }}>
+              <div key={idx}
+                className={`group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 transition-all duration-500 hover:border-accent ${productsReveal.isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+                style={{ transitionDelay: `${idx * 100}ms` }}>
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <SafeImage src={prod.img} alt={prod.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" />
                   <div className="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent opacity-60" />
@@ -288,40 +316,74 @@ export default function Page() {
         </div>
       </section>
 
-      {/* ABOUT SECTION (STATS STRIP INCLUDED) */}
-      <section id="about" ref={aboutReveal.ref} className="py-32 px-6 bg-white relative">
+      {/* ABOUT SECTION */}
+      <section id="about" ref={aboutReveal.ref} className="py-24 md:py-32 px-6 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className={`relative aspect-square rounded-full overflow-hidden border-[16px] border-secondary/5 transition-all duration-1000 ${aboutReveal.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-              <SafeImage 
-                src="https://images.unsplash.com/photo-1712431182145-dddb1a08a826?auto=format&fit=crop&q=80" 
-                alt="Technology" 
-                fill 
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            {/* Image Column - Adjusted for mobile */}
+            <div className={`hidden md:block relative aspect-square rounded-full overflow-hidden border-[16px] border-secondary/5 transition-all duration-1000 ${aboutReveal.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+              <SafeImage
+                src="https://images.unsplash.com/photo-1712431182145-dddb1a08a826?auto=format&fit=crop&q=80"
+                alt="Technology"
+                fill
                 className="object-cover"
               />
             </div>
-            
-            <div className={`transition-all duration-1000 delay-300 ${aboutReveal.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <h2 className="font-heading text-4xl md:text-5xl font-bold text-secondary mb-8">The Vision24 Difference</h2>
-              <p className="text-secondary/70 text-lg leading-relaxed mb-8">
-                Founded on a commitment to preserving and enhancing sight, Vision24 merges international expertise with local understanding. We invest heavily in technology to ensure you receive the clearest vision possible.
+
+            {/* Content Column */}
+            <div className={`w-full overflow-hidden transition-all duration-1000 delay-300 ${aboutReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 lg:translate-x-10'}`}>
+              <div className="inline-block px-4 py-2 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-widest mb-6">
+                Our Philosophy
+              </div>
+              <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-8 leading-[1.1] break-words">
+                The Vision24 <br className="md:hidden" /> Difference
+              </h2>
+              <p className="text-secondary/70 text-lg md:text-xl leading-relaxed mb-10">
+                At Vision24, we believe that world-class eye care should be accessible, empathetic, and technologically superior. We merge international surgical expertise with a deep commitment to the Lagos community.
               </p>
-              <p className="text-secondary/80 font-medium text-lg italic border-l-4 border-accent pl-6 mb-12">
-                "Sharp diagnosis, world-class care — quality wey go loud for your eyes."
-              </p>
-              
-              <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-3 gap-8 pt-10 border-t border-secondary/10 -mx-6 px-6 sm:mx-0 sm:px-0">
-                {STATS.map((stat, i) => (
-                  <div key={i} className="text-center sm:text-left min-w-[260px] sm:min-w-0 snap-center bg-secondary/5 sm:bg-transparent p-8 sm:p-0 rounded-3xl sm:rounded-none">
-                    <div className="flex items-center justify-center sm:justify-start gap-4 text-accent mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
-                        <stat.icon size={24} />
+
+              <div className="relative p-8 rounded-3xl bg-secondary/5 border-l-4 border-accent mb-12 italic">
+                <Quote size={32} className="text-accent/20 absolute -top-4 -left-4" />
+                <p className="text-secondary/80 font-medium text-xl leading-relaxed">
+                  "Sharp diagnosis, world-class care — quality wey go loud for your eyes."
+                </p>
+              </div>
+
+              {/* STATS SLIDER - Contained and Fitted */}
+              <div className="relative group">
+                <div
+                  ref={statsContainerRef}
+                  className="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-4"
+                >
+                  {STATS.map((stat, i) => (
+                    <div
+                      key={i}
+                      className={`flex-shrink-0 w-full md:w-auto snap-center bg-white border border-secondary/10 md:border-none p-8 rounded-[2rem] shadow-sm transition-all duration-500 ${activeStat === i ? 'border-accent shadow-md' : 'opacity-60 grayscale'
+                        } md:opacity-100 md:grayscale-0 md:border-secondary/5 md:shadow-none md:p-0 md:bg-transparent`}
+                    >
+                      <div className="flex items-center gap-4 mb-4 md:mb-6">
+                        <div className="w-12 h-12 rounded-xl bg-secondary/5 flex items-center justify-center text-accent">
+                          <stat.icon size={24} />
+                        </div>
+                        <span className="text-4xl md:text-3xl lg:text-4xl font-bold text-secondary tracking-tighter">{stat.number}</span>
                       </div>
-                      <span className="text-4xl font-bold text-secondary tracking-tighter">{stat.number}</span>
+                      <p className="text-secondary/40 text-[10px] tracking-[0.2em] uppercase font-black">{stat.label}</p>
                     </div>
-                    <p className="text-secondary/40 text-[10px] tracking-[0.3em] uppercase font-black">{stat.label}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                {/* DOTS INDICATOR - Only on mobile */}
+                <div className="flex md:hidden justify-center gap-2 mt-4">
+                  {STATS.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveStat(i)}
+                      className={`h-1.5 transition-all duration-300 rounded-full ${activeStat === i ? 'w-8 bg-accent' : 'w-2 bg-secondary/20'
+                        }`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -341,7 +403,7 @@ export default function Page() {
               <div key={i} className="bg-white p-10 rounded-[40px] shadow-sm border border-secondary/5 relative flex flex-col group hover:shadow-xl transition-all duration-500">
                 <Quote size={40} className="text-accent/20 absolute top-8 right-8" />
                 <div className="flex text-accent mb-6 gap-1">
-                  {[1,2,3,4,5].map(n => <Star key={n} fill="currentColor" size={14} />)}
+                  {[1, 2, 3, 4, 5].map(n => <Star key={n} fill="currentColor" size={14} />)}
                 </div>
                 <p className="text-secondary/70 italic leading-relaxed mb-10 text-lg">"{t.text}"</p>
                 <div className="mt-auto flex items-center gap-4">
@@ -368,7 +430,7 @@ export default function Page() {
               <p className="text-secondary/60 text-lg mb-12">
                 Our clinic is conveniently located in Lekki Phase 1. Fill out the form or reach us via WhatsApp for immediate appointment booking.
               </p>
-              
+
               <div className="space-y-8">
                 {[
                   { icon: Phone, label: "Phone", val: BRAND.contact.whatsapp },
@@ -449,7 +511,7 @@ export default function Page() {
                 Setting the standard for premium eye care in West Africa. Expert ophthalmic surgeons, world-class diagnostics, and elite optical wear.
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-bold text-white mb-8 tracking-widest uppercase text-xs">Quick Links</h4>
               <ul className="space-y-4 text-white/60">
